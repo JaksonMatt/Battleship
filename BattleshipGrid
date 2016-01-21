@@ -1,0 +1,884 @@
+package Unit3.BattleShip;
+import java.util.*;
+//Matthew Jackson
+//Lab 17 (i.e. Hell)
+public class BattleshipGrid
+{
+    public static void main()
+    {
+        BattleshipGrid b = new BattleshipGrid(1);
+        for (int r = 0; r < 10; r++)
+        {
+            for (int c = 0 ; c < 10; c++)
+                System.out.print(b.grid[r][c] + " " );
+            System.out.println();
+        }
+    }
+    private char grid[][] = new char[10][10];
+    private Point des0, des1, sub0, sub1, sub2, cru0, cru1, cru2, bat0, bat1, bat2, bat3,
+        car0, car1, car2, car3, car4;
+    private Carrier ca;
+    private Battleship ba;
+    private Submarine su;
+    private Cruiser cr;
+    private Destroyer de;
+    public BattleshipGrid()
+    {
+        for (int r = 0; r < 10; r++)
+        {
+            for (int c = 0 ; c < 10; c++)
+                grid[r][c] = '~';
+        }
+        System.out.println("Time to place ships! You can place them anywhere on this grid.\n");
+        for (int r = 0; r < 10; r++)
+        {
+            for (int c = 0 ; c < 10; c++)
+                System.out.print(grid[r][c] + " " );
+            System.out.println();
+        }
+        Scanner s = new Scanner(System.in);
+        int row = 0, column = 0;
+        boolean invalid,b;
+        String ship;
+        do
+        {
+            invalid = false;
+            do
+            {
+                b = false;
+                System.out.print("What coordinates would you like to place the first section\n"
+                    + " of your 5 section Aircraft Carrier. Ex: A4 (Make sure it\nfits and "
+                    + "doesn't cross over any other boats)\t");
+                ship = s.next();
+                if(ship.length() > 2)
+                    if(!(ship.charAt(1) == '1' && ship.charAt(2) == '0' && ship.length() == 3))
+                    {
+                        invalid = true;
+                        b = true;
+                    }
+                if(ship.length() < 2)
+                    b = true;
+            }
+            while(b);
+            switch(ship.charAt(0))
+            {
+                case 'a':
+                case 'A':
+                    column = 0;
+                    break;
+                case 'b':
+                case 'B':
+                    column = 1;
+                    break;
+                case 'c':
+                case 'C':
+                    column = 2;
+                    break;
+                case 'd':
+                case 'D':
+                    column = 3;
+                    break;
+                case 'e':
+                case 'E':
+                    column = 4;
+                    break;
+                case 'f':
+                case 'F':
+                    column = 5;
+                    break;
+                case 'g':
+                case 'G':
+                    column = 6;
+                    break;
+                case 'h':
+                case 'H':
+                    column = 7;
+                    break;
+                case 'i':
+                case 'I':
+                    column = 8;
+                    break;
+                case 'j':
+                case 'J':
+                    column = 9;
+                    break;
+                default:
+                    invalid = true;
+                    break;
+            }
+            if(!invalid && ship.length() == 3)
+                row = 9;
+            else
+                row = (Character.getNumericValue(ship.charAt(1))) - 1;
+            if(row < 0)
+                invalid = true;
+            boolean vert = false,v;
+            do
+            {
+                v = false;
+                vert = false;
+                System.out.println("Would you like the ship to be vertical or horizontal?"
+                    + " type\n 'vertical' for vertical and 'horizontal' for horizontal");
+                String VoH = s.next();
+                switch(VoH)
+                {
+                    case "vertical":
+                    case "Vertical":
+                        v = true;
+                        break;
+                    case "horizontal":
+                    case "Horizontal":
+                        v = false;
+                        break;
+                    default:
+                        vert = true;
+                }
+            }
+            while(vert);
+            if(v && row > 6 )
+                invalid = true;
+            if(!v && column > 6)
+                invalid = true;
+            if(!v)
+            {
+                car0 = new Point(row, column);
+                car1 = new Point(row, column + 1);
+                car2 = new Point(row, column + 2);
+                car3 = new Point(row, column + 3);
+                car4 = new Point(row, column + 4);
+            }
+            else
+            {
+                car0 = new Point(row, column);
+                car1 = new Point(row + 1, column);
+                car2 = new Point(row + 2, column);
+                car3 = new Point(row + 3, column);
+                car4 = new Point(row + 4, column);
+            }
+        }
+        while(invalid);
+        ca = new Carrier (car0, car1, car2, car3, car4);
+        grid[car0.getIntX()][car0.getIntY()] = 'A';
+        grid[car1.getIntX()][car1.getIntY()] = 'A';
+        grid[car2.getIntX()][car2.getIntY()] = 'A';
+        grid[car3.getIntX()][car3.getIntY()] = 'A';
+        grid[car4.getIntX()][car4.getIntY()] = 'A';
+        for (int r = 0; r < 10; r++)
+        {
+            for (int c = 0 ; c < 10; c++)
+                System.out.print(grid[r][c] + " " );
+            System.out.println();
+        }
+        //construct battleship
+        do
+        {
+            invalid = false;
+            do
+            {
+                b = false;
+                System.out.print("What coordinates would you like to place the first section\n"
+                    + " of your 4 section Battleship. Ex: A4 (Make sure it\nfits and "
+                    + "doesn't cross over any other boats)\t");
+                ship = s.next();
+                if(ship.length() > 2)
+                    if(!(ship.charAt(1) == '1' && ship.charAt(2) == '0' && ship.length() == 3))
+                    {
+                        invalid = true;
+                        b = true;
+                    }
+                if(ship.length() < 2)
+                    b = true;
+            }
+            while(b);
+            switch(ship.charAt(0))
+            {
+                case 'a':
+                case 'A':
+                    column = 0;
+                    break;
+                case 'b':
+                case 'B':
+                    column = 1;
+                    break;
+                case 'c':
+                case 'C':
+                    column = 2;
+                    break;
+                case 'd':
+                case 'D':
+                    column = 3;
+                    break;
+                case 'e':
+                case 'E':
+                    column = 4;
+                    break;
+                case 'f':
+                case 'F':
+                    column = 5;
+                    break;
+                case 'g':
+                case 'G':
+                    column = 6;
+                    break;
+                case 'h':
+                case 'H':
+                    column = 7;
+                    break;
+                case 'i':
+                case 'I':
+                    column = 8;
+                    break;
+                case 'j':
+                case 'J':
+                    column = 9;
+                    break;
+                default:
+                    invalid = true;
+                    break;
+            }
+            if(!invalid && ship.length() == 3)
+                row = 9;
+            else
+                row = (Character.getNumericValue(ship.charAt(1))) - 1;
+            if(row < 0)
+                invalid = true;
+            boolean vert = false,v;
+            do
+            {
+                v = false;
+                vert = false;
+                System.out.println("Would you like the ship to be vertical or horizontal?"
+                    + " type\n 'vertical' for vertical and 'horizontal' for horizontal");
+                String VoH = s.next();
+                switch(VoH)
+                {
+                    case "vertical":
+                    case "Vertical":
+                        v = true;
+                        break;
+                    case "horizontal":
+                    case "Horizontal":
+                        v = false;
+                        break;
+                    default:
+                        vert = true;
+                }
+            }
+            while(vert);
+            if(v && row > 7 )
+                invalid = true;
+            if(!v && column > 7)
+                invalid = true;
+            if(!v)
+            {
+                bat0 = new Point(row, column);
+                bat1 = new Point(row, column + 1);
+                bat2 = new Point(row, column + 2);
+                bat3 = new Point(row, column + 3);
+            }
+            else
+            {
+                bat0 = new Point(row, column);
+                bat1 = new Point(row + 1, column);
+                bat2 = new Point(row + 2, column);
+                bat3 = new Point(row + 3, column);
+            }
+            ba = new Battleship(bat0, bat1, bat2, bat3);
+        }
+        while(invalidTest(invalid,ba));
+        
+        grid[bat0.getIntX()][bat0.getIntY()] = 'B';
+        grid[bat1.getIntX()][bat1.getIntY()] = 'B';
+        grid[bat2.getIntX()][bat2.getIntY()] = 'B';
+        grid[bat3.getIntX()][bat3.getIntY()] = 'B';
+        for (int r = 0; r < 10; r++)
+        {
+            for (int c = 0 ; c < 10; c++)
+                System.out.print(grid[r][c] + " " );
+            System.out.println();
+        }
+        do
+        {
+            invalid = false;
+            do
+            {
+                b = false;
+                System.out.print("What coordinates would you like to place the first section\n"
+                    + " of your 3 section Submarine. Ex: A4 (Make sure it\nfits and "
+                    + "doesn't cross over any other boats)\t");
+                ship = s.next();
+                if(ship.length() > 2)
+                    if(!(ship.charAt(1) == '1' && ship.charAt(2) == '0' && ship.length() == 3))
+                    {
+                        invalid = true;
+                        b = true;
+                    }
+                if(ship.length() < 2)
+                    b = true;
+            }
+            while(b);
+            switch(ship.charAt(0))
+            {
+                case 'a':
+                case 'A':
+                    column = 0;
+                    break;
+                case 'b':
+                case 'B':
+                    column = 1;
+                    break;
+                case 'c':
+                case 'C':
+                    column = 2;
+                    break;
+                case 'd':
+                case 'D':
+                    column = 3;
+                    break;
+                case 'e':
+                case 'E':
+                    column = 4;
+                    break;
+                case 'f':
+                case 'F':
+                    column = 5;
+                    break;
+                case 'g':
+                case 'G':
+                    column = 6;
+                    break;
+                case 'h':
+                case 'H':
+                    column = 7;
+                    break;
+                case 'i':
+                case 'I':
+                    column = 8;
+                    break;
+                case 'j':
+                case 'J':
+                    column = 9;
+                    break;
+                default:
+                    invalid = true;
+                    break;
+            }
+            if(!invalid && ship.length() == 3)
+                row = 9;
+            else
+                row = (Character.getNumericValue(ship.charAt(1))) - 1;
+            if(row < 0)
+                invalid = true;
+            boolean vert = false,v;
+            do
+            {
+                v = false;
+                vert = false;
+                System.out.println("Would you like the ship to be vertical or horizontal?"
+                    + " type\n 'vertical' for vertical and 'horizontal' for horizontal");
+                String VoH = s.next();
+                switch(VoH)
+                {
+                    case "vertical":
+                    case "Vertical":
+                        v = true;
+                        break;
+                    case "horizontal":
+                    case "Horizontal":
+                        v = false;
+                        break;
+                    default:
+                        vert = true;
+                }
+            }
+            while(vert);
+            if(v && row > 8)
+                invalid = true;
+            if(!v && column > 8)
+                invalid = true;
+            if(!v)
+            {
+                sub0 = new Point(row, column);
+                sub1 = new Point(row, column + 1);
+                sub2 = new Point(row, column + 2);
+            }
+            else
+            {
+                sub0 = new Point(row, column);
+                sub1 = new Point(row + 1, column);
+                sub2 = new Point(row + 2, column);
+            }
+            su = new Submarine(sub0, sub1, sub2);
+        }
+        while(invalidTest(invalid,su));
+        grid[sub0.getIntX()][sub0.getIntY()] = 'S';
+        grid[sub1.getIntX()][sub1.getIntY()] = 'S';
+        grid[sub2.getIntX()][sub2.getIntY()] = 'S';
+        for (int r = 0; r < 10; r++)
+        {
+            for (int c = 0 ; c < 10; c++)
+                System.out.print(grid[r][c] + " " );
+            System.out.println();
+        }
+        do
+        {
+            invalid = false;
+            do
+            {
+                b = false;
+                System.out.print("What coordinates would you like to place the first section\n"
+                    + " of your 3 section Cruiser. Ex: A4 (Make sure it\nfits and "
+                    + "doesn't cross over any other boats)\t");
+                ship = s.next();
+                if(ship.length() > 2)
+                    if(!(ship.charAt(1) == '1' && ship.charAt(2) == '0' && ship.length() == 3))
+                    {
+                        invalid = true;
+                        b = true;
+                    }
+                if(ship.length() < 2)
+                    b = true;
+            }
+            while(b);
+            switch(ship.charAt(0))
+            {
+                case 'a':
+                case 'A':
+                    column = 0;
+                    break;
+                case 'b':
+                case 'B':
+                    column = 1;
+                    break;
+                case 'c':
+                case 'C':
+                    column = 2;
+                    break;
+                case 'd':
+                case 'D':
+                    column = 3;
+                    break;
+                case 'e':
+                case 'E':
+                    column = 4;
+                    break;
+                case 'f':
+                case 'F':
+                    column = 5;
+                    break;
+                case 'g':
+                case 'G':
+                    column = 6;
+                    break;
+                case 'h':
+                case 'H':
+                    column = 7;
+                    break;
+                case 'i':
+                case 'I':
+                    column = 8;
+                    break;
+                case 'j':
+                case 'J':
+                    column = 9;
+                    break;
+                default:
+                    invalid = true;
+                    break;
+            }
+            if(!invalid && ship.length() == 3)
+                row = 9;
+            else
+                row = (Character.getNumericValue(ship.charAt(1))) - 1;
+            if(row < 0)
+                invalid = true;
+            boolean vert = false,v;
+            do
+            {
+                v = false;
+                vert = false;
+                System.out.println("Would you like the ship to be vertical or horizontal?"
+                    + " type\n 'vertical' for vertical and 'horizontal' for horizontal");
+                String VoH = s.next();
+                switch(VoH)
+                {
+                    case "vertical":
+                    case "Vertical":
+                        v = true;
+                        break;
+                    case "horizontal":
+                    case "Horizontal":
+                        v = false;
+                        break;
+                    default:
+                        vert = true;
+                }
+            }
+            while(vert);
+            if(v && row > 8)
+                invalid = true;
+            if(!v && column > 8)
+                invalid = true;
+            if(!v)
+            {
+                cru0 = new Point(row, column);
+                cru1 = new Point(row, column + 1);
+                cru2 = new Point(row, column + 2);
+            }
+            else
+            {
+                cru0 = new Point(row, column);
+                cru1 = new Point(row + 1, column);
+                cru2 = new Point(row + 2, column);
+            }
+            cr = new Cruiser(cru0, cru1, cru2);
+        }
+        while(invalidTest(invalid,cr));
+        grid[cru0.getIntX()][cru0.getIntY()] = 'C';
+        grid[cru1.getIntX()][cru1.getIntY()] = 'C';
+        grid[cru2.getIntX()][cru2.getIntY()] = 'C';
+        for (int r = 0; r < 10; r++)
+        {
+            for (int c = 0 ; c < 10; c++)
+                System.out.print(grid[r][c] + " " );
+            System.out.println();
+        }
+        do
+        {
+            invalid = false;
+            do
+            {
+                b = false;
+                System.out.print("What coordinates would you like to place the first section\n"
+                    + " of your 2 section Destroyer. Ex: A4 (Make sure it\nfits and "
+                    + "doesn't cross over any other boats)\t");
+                ship = s.next();
+                if(ship.length() > 2)
+                    if(!(ship.charAt(1) == '1' && ship.charAt(2) == '0' && ship.length() == 3))
+                    {
+                        invalid = true;
+                        b = true;
+                    }
+                if(ship.length() < 2)
+                    b = true;
+            }
+            while(b);
+            switch(ship.charAt(0))
+            {
+                case 'a':
+                case 'A':
+                    column = 0;
+                    break;
+                case 'b':
+                case 'B':
+                    column = 1;
+                    break;
+                case 'c':
+                case 'C':
+                    column = 2;
+                    break;
+                case 'd':
+                case 'D':
+                    column = 3;
+                    break;
+                case 'e':
+                case 'E':
+                    column = 4;
+                    break;
+                case 'f':
+                case 'F':
+                    column = 5;
+                    break;
+                case 'g':
+                case 'G':
+                    column = 6;
+                    break;
+                case 'h':
+                case 'H':
+                    column = 7;
+                    break;
+                case 'i':
+                case 'I':
+                    column = 8;
+                    break;
+                case 'j':
+                case 'J':
+                    column = 9;
+                    break;
+                default:
+                    invalid = true;
+                    break;
+            }
+            if(!invalid && ship.length() == 3)
+                row = 9;
+            else
+                row = (Character.getNumericValue(ship.charAt(1))) - 1;
+            if(row < 0)
+                invalid = true;
+            boolean vert = false,v;
+            do
+            {
+                v = false;
+                vert = false;
+                System.out.println("Would you like the ship to be vertical or horizontal?"
+                    + " type\n 'vertical' for vertical and 'horizontal' for horizontal");
+                String VoH = s.next();
+                switch(VoH)
+                {
+                    case "vertical":
+                    case "Vertical":
+                        v = true;
+                        break;
+                    case "horizontal":
+                    case "Horizontal":
+                        v = false;
+                        break;
+                    default:
+                        vert = true;
+                }
+            }
+            while(vert);
+            if(v && row > 9 )
+                invalid = true;
+            if(!v && column > 9)
+                invalid = true;
+            if(!v)
+            {
+                des0 = new Point(row, column);
+                des1 = new Point(row, column + 1);
+            }
+            else
+            {
+                des0 = new Point(row, column);
+                des1 = new Point(row + 1, column);
+            }
+            de = new Destroyer(des0, des1);
+        }
+        while(invalidTest(invalid,de));
+        grid[des0.getIntX()][des0.getIntY()] = 'D';
+        grid[des1.getIntX()][des1.getIntY()] = 'D';
+        System.out.println('\u000C');
+    }
+    //random is only there to distinguish between user created grid
+    //and randomly created grid
+    public BattleshipGrid(int random)
+    {
+        int row, column;
+        for (int r = 0; r < 10; r++)
+        {
+            for (int c = 0 ; c < 10; c++)
+                grid[r][c] = '~';
+        }
+        //construct Carrier
+        int v = (int)(Math.random() * 2 + 1);
+        if(v == 1)
+        {
+            row = (int)(Math.random() * 10);
+            column = (int)(Math.random() * 5);
+            car0 = new Point(row, column);
+            car1 = new Point(row, column + 1);
+            car2 = new Point(row, column + 2);
+            car3 = new Point(row, column + 3);
+            car4 = new Point(row, column + 4);
+        }
+        else
+        {
+            row = (int)(Math.random() * 5);
+            column = (int)(Math.random() * 10);
+            car0 = new Point(row, column);
+            car1 = new Point(row + 1, column);
+            car2 = new Point(row + 2, column);
+            car3 = new Point(row + 3, column);
+            car4 = new Point(row + 4, column);
+        }
+        ca = new Carrier (car0, car1, car2, car3, car4);
+        grid[car0.getIntX()][car0.getIntY()] = 'A';
+        grid[car1.getIntX()][car1.getIntY()] = 'A';
+        grid[car2.getIntX()][car2.getIntY()] = 'A';
+        grid[car3.getIntX()][car3.getIntY()] = 'A';
+        grid[car4.getIntX()][car4.getIntY()] = 'A';
+        //constructing Battleship
+        do
+        {
+            v = (int)(Math.random() * 2 + 1);
+            if(v == 1)
+            {
+                row = (int)(Math.random() * 10);
+                column = (int)(Math.random() * 6);
+                bat0 = new Point(row, column);
+                bat1 = new Point(row, column + 1);
+                bat2 = new Point(row, column + 2);
+                bat3 = new Point(row, column + 3);
+            }
+            else
+            {
+                row = (int)(Math.random() * 6);
+                column = (int)(Math.random() * 10);
+                bat0 = new Point(row, column);
+                bat1 = new Point(row + 1, column);
+                bat2 = new Point(row + 2, column);
+                bat3 = new Point(row + 3, column);
+            }
+            ba = new Battleship(bat0, bat1, bat2, bat3);
+        }
+        while(collision(ba));
+        grid[bat0.getIntX()][bat0.getIntY()] = 'B';
+        grid[bat1.getIntX()][bat1.getIntY()] = 'B';
+        grid[bat2.getIntX()][bat2.getIntY()] = 'B';
+        grid[bat3.getIntX()][bat3.getIntY()] = 'B';
+        //constructing Submarine
+        do
+        {
+            v = (int)(Math.random() * 2 + 1);
+            if(v == 1)
+            {
+                row = (int)(Math.random() * 10);
+                column = (int)(Math.random() * 7);
+                sub0 = new Point(row, column);
+                sub1 = new Point(row, column + 1);
+                sub2 = new Point(row, column + 2);
+            }
+            else
+            {
+                row = (int)(Math.random() * 7);
+                column = (int)(Math.random() * 10);
+                sub0 = new Point(row, column);
+                sub1 = new Point(row + 1, column);
+                sub2 = new Point(row + 2, column);
+            }
+            su = new Submarine(sub0, sub1, sub2);
+        }
+        while(collision(su));
+        grid[sub0.getIntX()][sub0.getIntY()] = 'S';
+        grid[sub1.getIntX()][sub1.getIntY()] = 'S';
+        grid[sub2.getIntX()][sub2.getIntY()] = 'S';
+        //constructing Cruiser
+        do
+        {
+            v = (int)(Math.random() * 2 + 1);
+            if(v == 1)
+            {
+                row = (int)(Math.random() * 10);
+                column = (int)(Math.random() * 7);
+                cru0 = new Point(row, column);
+                cru1 = new Point(row, column + 1);
+                cru2 = new Point(row, column + 2);
+            }
+            else
+            {
+                row = (int)(Math.random() * 7);
+                column = (int)(Math.random() * 10);
+                cru0 = new Point(row, column);
+                cru1 = new Point(row + 1, column);
+                cru2 = new Point(row + 2, column);
+            }
+            cr = new Cruiser(cru0, cru1, cru2);
+        }
+        while(collision(cr));
+        grid[cru0.getIntX()][cru0.getIntY()] = 'C';
+        grid[cru1.getIntX()][cru1.getIntY()] = 'C';
+        grid[cru2.getIntX()][cru2.getIntY()] = 'C';
+        //constructing Destroyer
+        do
+        {
+            v = (int)(Math.random() * 2 + 1);
+            if(v == 1)
+            {
+                row = (int)(Math.random() * 10);
+                column = (int)(Math.random() * 8);
+                des0 = new Point(row, column);
+                des1 = new Point(row, column + 1);
+            }
+            else
+            {
+                row = (int)(Math.random() * 8);
+                column = (int)(Math.random() * 10);
+                des0 = new Point(row, column);
+                des1 = new Point(row + 1, column);
+            }
+            de = new Destroyer(des0, des1);
+        }
+        while(collision(de));
+        grid[des0.getIntX()][des0.getIntY()] = 'D';
+        grid[des1.getIntX()][des1.getIntY()] = 'D';
+    }
+    public char[][] getGrid()
+    {
+        return grid;
+    }
+    /**
+     * Finds if there is a collision between ships
+     * Returns false if there is no collision
+     */
+    public boolean collision(Battleship x)
+    {
+        return !(grid[x.getPos()[0].getIntX()][x.getPos()[0].getIntY()] ==
+            '~' && grid[x.getPos()[1].getIntX()][x.getPos()[1].getIntY()]
+            == '~' && grid[x.getPos()[2].getIntX()][x.getPos()[2].getIntY()] == 
+            '~' && grid[x.getPos()[3].getIntX()][x.getPos()[3].getIntY()] == '~');
+    }
+    /**
+     * Finds if there is a collision between ships
+     * Returns false if there is no collision
+     */
+    public boolean collision(Submarine x)
+    { 
+        return !(grid[x.getPos()[0].getIntX()][x.getPos()[0].getIntY()] ==
+            '~' && grid[x.getPos()[1].getIntX()][x.getPos()[1].getIntY()]
+            == '~' && grid[x.getPos()[2].getIntX()][x.getPos()[2].getIntY()] == 
+            '~');
+    }
+    /**
+     * Finds if there is a collision between ships
+     * Returns false if there is no collision
+     */
+    public boolean collision(Cruiser x)
+    {
+        return !(grid[x.getPos()[0].getIntX()][x.getPos()[0].getIntY()] ==
+            '~' && grid[x.getPos()[1].getIntX()][x.getPos()[1].getIntY()]
+            == '~' && grid[x.getPos()[2].getIntX()][x.getPos()[2].getIntY()] == 
+            '~');
+    }
+    /**
+     * Finds if there is a collision between ships
+     * Returns false if there is no collision
+     */
+    public boolean collision(Destroyer x)
+    {
+        return !(grid[x.getPos()[0].getIntX()][x.getPos()[0].getIntY()] ==
+            '~' && grid[x.getPos()[1].getIntX()][x.getPos()[1].getIntY()]
+            == '~');
+    }
+    public boolean invalidTest(boolean inv, Battleship o)
+    {
+        if(inv)
+            return true;
+        if(collision(o))
+            return true;
+        return false;
+    }
+    public boolean invalidTest(boolean inv, Submarine o)
+    {
+        if(inv)
+            return true;
+        if(collision(o))
+            return true;
+        return false;
+    }
+    public boolean invalidTest(boolean inv, Cruiser o)
+    {
+        if(inv)
+            return true;
+        if(collision(o))
+            return true;
+        return false;
+    }
+    public boolean invalidTest(boolean inv, Destroyer o)
+    {
+        if(inv)
+            return true;
+        if(collision(o))
+            return true;
+        return false;
+    }
+}
